@@ -72,17 +72,23 @@
                         <h3>Key Experiences</h3>
                         <div class="experience-grid">
                             <div class="experience-card">
-                                <div class="card-icon">🎓</div>
+                                <div class="card-image-wrapper">
+                                    <img src="assets/graduation cap (1).jpg" alt="Graduation Cap">
+                                </div>
                                 <h4>Universities & Colleges</h4>
                                 <p>Discover higher education institutions matching your ambitions.</p>
                             </div>
                             <div class="experience-card">
-                                <div class="card-icon">💡</div>
+                                <div class="card-image-wrapper">
+                                    <img src="assets/fundings (2).jpg" alt="Funding and Bursary">
+                                </div>
                                 <h4>Bursary & Funding</h4>
                                 <p>Learn about scholarships and financial aid opportunities.</p>
                             </div>
                             <div class="experience-card">
-                                <div class="card-icon">🚀</div>
+                                <div class="card-image-wrapper">
+                                    <img src="assets/careerLaunch (1).jpg" alt="Career Pathways">
+                                </div>
                                 <h4>Career Pathways</h4>
                                 <p>Gain vital industry insights directly from professionals.</p>
                             </div>
@@ -155,6 +161,26 @@
     <!-- Minimal script for dynamic year -->
     <script>
         document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
+
+    <!-- Firebase Connection -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-analytics.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyApT0lB52kg3N47oClqeHSbvOUmY3933Xg",
+            authDomain: "valyou-9c872.firebaseapp.com",
+            projectId: "valyou-9c872",
+            storageBucket: "valyou-9c872.firebasestorage.app",
+            messagingSenderId: "312718879853",
+            appId: "1:312718879853:web:f055e189a57df665fae364",
+            measurementId: "G-2DJT2D425Z"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        console.log("Firebase successfully connected.");
     </script>
 </body>
 </html>
