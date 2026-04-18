@@ -23,7 +23,7 @@
                 <img src="assets/valyou3.jpeg" alt="ValYou Logo" class="logo-image">
                 <span class="logo-text">ValYou</span>
             </a>
-            <a href="#register" class="btn btn-outline">Register Now</a>
+            <button class="btn btn-outline modal-trigger">Register Now</button>
         </div>
     </header>
 
@@ -38,7 +38,7 @@
                         ValYou is a youth development initiative helping young people discover their self-worth, unlock their potential, and gain exposure to opportunities that shape their future.
                     </p>
                     <div class="hero-actions">
-                        <a href="#register" class="btn btn-primary">Register for the ValYou Career Day</a>
+                        <button class="btn btn-primary modal-trigger">Register for the ValYou Career Day</button>
                     </div>
                 </div>
                 <!-- Optional: Use one of the images as a hero visual, styled perfectly -->
@@ -127,8 +127,7 @@
             <div class="container cta-container">
                 <h2 class="cta-title">Take the First Step</h2>
                 <p class="cta-copy">Your future matters. Your value matters. This is your opportunity to take the first step toward a purpose-driven life.</p>
-                <!-- Formspree placeholder link -->
-                <a href="https://formspree.io/" class="btn btn-primary btn-large">Register Now</a>
+                <button class="btn btn-primary btn-large modal-trigger">Register Now</button>
             </div>
         </section>
     </main>
@@ -158,6 +157,59 @@
         </div>
     </footer>
 
+    <!-- Registration Modal -->
+    <div id="registrationModal" class="modal-overlay">
+        <div class="modal-container">
+            <button class="modal-close" aria-label="Close modal">&times;</button>
+            
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Register for ValYou</h2>
+                    <p>Complete the form below to secure your spot for the ValYou Career Day.</p>
+                </div>
+
+                <div id="formContainer">
+                    <form id="registrationForm" class="registration-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                            <span class="error-message">Please enter a valid name.</span>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="e.g. 082 123 4567" required>
+                            <span class="error-message">Please enter a valid 10-digit phone number.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                            <span class="error-message">Please enter a valid email address.</span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full" id="submitBtn">
+                            <span class="btn-text">Submit Registration</span>
+                            <span class="btn-loader" style="display: none;"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Success State -->
+                <div id="successState" class="success-state" style="display: none;">
+                    <div class="success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                    </div>
+                    <h3>Registration Successful!</h3>
+                    <p>Thank you for registering for the ValYou Career Day. We've received your details and will be in touch soon.</p>
+                    <button class="btn btn-outline" id="closeSuccessBtn">Return to Site</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Minimal script for dynamic year -->
     <script>
         document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -181,6 +233,135 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         console.log("Firebase successfully connected.");
+    </script>
+
+    <!-- Modal and Form Handling Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('registrationModal');
+            const triggers = document.querySelectorAll('.modal-trigger');
+            const closeBtn = document.querySelector('.modal-close');
+            const form = document.getElementById('registrationForm');
+            const formContainer = document.getElementById('formContainer');
+            const successState = document.getElementById('successState');
+            const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+
+            // Open Modal
+            triggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                });
+            });
+
+            // Close Modal Function
+            const closeModal = () => {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                // Reset form on close after a short delay to allow transition
+                setTimeout(() => {
+                    form.reset();
+                    formContainer.style.display = 'block';
+                    successState.style.display = 'none';
+                    resetErrors();
+                }, 300);
+            };
+
+            closeBtn.addEventListener('click', closeModal);
+            closeSuccessBtn.addEventListener('click', closeModal);
+
+            // Close on outside click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Form Validation and Submission
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                resetErrors();
+
+                let isValid = true;
+
+                // Validate Name
+                const nameInput = document.getElementById('fullName');
+                if (nameInput.value.trim().length < 2) {
+                    showError(nameInput);
+                    isValid = false;
+                }
+
+                // Validate Phone (basic 10 digit check)
+                const phoneInput = document.getElementById('phone');
+                const phoneRegex = /^[\d\s\-\+]{10,15}$/;
+                if (!phoneRegex.test(phoneInput.value.trim())) {
+                    showError(phoneInput);
+                    isValid = false;
+                }
+
+                // Validate Email
+                const emailInput = document.getElementById('email');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(emailInput.value.trim())) {
+                    showError(emailInput);
+                    isValid = false;
+                }
+
+                if (!isValid) return;
+
+                // Set Loading State
+                btnText.textContent = 'Submitting...';
+                btnLoader.style.display = 'inline-block';
+                submitBtn.disabled = true;
+
+                try {
+                    // Send Form Data
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (response.ok) {
+                        formContainer.style.display = 'none';
+                        successState.style.display = 'flex';
+                    } else {
+                        // Formspree returned error (e.g. invalid setup or ID)
+                        alert("Oops! There was a problem submitting your form. Please make sure the Formspree endpoint is configured.");
+                    }
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    alert("Network error. Please try again later.");
+                } finally {
+                    // Reset Loading State
+                    btnText.textContent = 'Submit Registration';
+                    btnLoader.style.display = 'none';
+                    submitBtn.disabled = false;
+                }
+            });
+
+            function showError(inputElement) {
+                inputElement.classList.add('error');
+                inputElement.nextElementSibling.style.display = 'block';
+            }
+
+            function resetErrors() {
+                const inputs = form.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.classList.remove('error');
+                    if(input.nextElementSibling && input.nextElementSibling.classList.contains('error-message')) {
+                        input.nextElementSibling.style.display = 'none';
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
