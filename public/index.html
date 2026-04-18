@@ -31,7 +31,7 @@
         <!-- Hero Section -->
         <section class="hero-section">
             <div class="container hero-container">
-                <div class="hero-content">
+                <div class="hero-content reveal-up">
                     <p class="trust-line">A youth initiative by The Courageous Life &bull; South Africa</p>
                     <h1 class="headline">Know Your Value.<br>Shape Your Future.</h1>
                     <p class="subheadline">
@@ -42,7 +42,7 @@
                     </div>
                 </div>
                 <!-- Optional: Use one of the images as a hero visual, styled perfectly -->
-                <div class="hero-image-wrapper">
+                <div class="hero-image-wrapper reveal-left delay-200">
                     <img src="assets/valyou1.jpg" alt="South African youth smiling" class="hero-image">
                 </div>
             </div>
@@ -50,7 +50,7 @@
 
         <!-- About ValYou Section -->
         <section class="about-section" id="about">
-            <div class="container about-container">
+            <div class="container about-container reveal-up">
                 <div class="about-text">
                     <h2 class="section-title">What is ValYou?</h2>
                     <p>ValYou is a youth development initiative by The Courageous Life focused on empowering young people to discover their personal value, purpose, and potential.</p>
@@ -61,7 +61,7 @@
 
         <!-- Event Section (Core Focus) -->
         <section class="event-section" id="event">
-            <div class="container event-container">
+            <div class="container event-container reveal-up">
                 <div class="event-header">
                     <h2 class="section-title">ValYou Career Day</h2>
                     <p class="event-intro">Join us for the ValYou Career Day, where young people gain exposure to education, career pathways, and opportunities that can shape their future.</p>
@@ -71,21 +71,21 @@
                     <div class="key-experiences">
                         <h3>Key Experiences</h3>
                         <div class="experience-grid">
-                            <div class="experience-card">
+                            <div class="experience-card reveal-up delay-100">
                                 <div class="card-image-wrapper">
                                     <img src="assets/graduation cap (1).jpg" alt="Graduation Cap">
                                 </div>
                                 <h4>Universities & Colleges</h4>
                                 <p>Discover higher education institutions matching your ambitions.</p>
                             </div>
-                            <div class="experience-card">
+                            <div class="experience-card reveal-up delay-200">
                                 <div class="card-image-wrapper">
                                     <img src="assets/fundings (2).jpg" alt="Funding and Bursary">
                                 </div>
                                 <h4>Bursary & Funding</h4>
                                 <p>Learn about scholarships and financial aid opportunities.</p>
                             </div>
-                            <div class="experience-card">
+                            <div class="experience-card reveal-up delay-300">
                                 <div class="card-image-wrapper">
                                     <img src="assets/careerLaunch (1).jpg" alt="Career Pathways">
                                 </div>
@@ -95,7 +95,7 @@
                         </div>
                     </div>
 
-                    <div class="event-details-panel">
+                    <div class="event-details-panel reveal-up delay-200">
                         <div class="event-image-wrapper">
                             <img src="assets/valyou2.jpg" alt="Youth collaboration" class="event-image">
                         </div>
@@ -124,7 +124,7 @@
 
         <!-- Final Call to Action -->
         <section class="final-cta-section" id="register">
-            <div class="container cta-container">
+            <div class="container cta-container reveal-up">
                 <h2 class="cta-title">Take the First Step</h2>
                 <p class="cta-copy">Your future matters. Your value matters. This is your opportunity to take the first step toward a purpose-driven life.</p>
                 <button class="btn btn-primary btn-large modal-trigger">Register Now</button>
@@ -361,6 +361,57 @@
                     }
                 });
             }
+        });
+    </script>
+
+    <!-- Advanced Animations Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Scroll Reveal using IntersectionObserver
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.15
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('reveal-active');
+                        // Optional: unobserve if you only want it to animate once
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+            revealElements.forEach(el => observer.observe(el));
+
+            // 2. Magnetic Buttons
+            const magneticButtons = document.querySelectorAll('.btn');
+            
+            magneticButtons.forEach(btn => {
+                btn.addEventListener('mousemove', (e) => {
+                    const rect = btn.getBoundingClientRect();
+                    
+                    // Coordinates relative to bounding box
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Coordinates relative to center of button
+                    const centerX = x - (rect.width / 2);
+                    const centerY = y - (rect.height / 2);
+                    
+                    // 0.3 is the magnetic pull strength
+                    btn.style.setProperty('--mx', `${centerX * 0.3}px`);
+                    btn.style.setProperty('--my', `${centerY * 0.3}px`);
+                });
+
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.setProperty('--mx', '0px');
+                    btn.style.setProperty('--my', '0px');
+                });
+            });
         });
     </script>
 </body>
